@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CartoDBlock</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <link rel="shortcut icon" href="http://cartodb.com/assets/favicon.ico" />
+    <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.13/themes/css/cartodb.css" />
+    <link rel="stylesheet" href="github-markdown.css" />
+    <link rel="stylesheet" href="default.css" />
+    <link rel="stylesheet" href="http://cdn.datatables.net/1.10.6/css/jquery.dataTables.css" />
+    <style>
+      html, body, #map {
+        padding: 0;
+        margin: 0;
+      }
+
+      body {
+        overflow: auto;
+      }
+
+      #content {
+        margin: 80px auto;
+        max-width: 1000px;
+        background: white;
+        padding: 0px 30px;
+        /*border: 1px solid #CCC;*/
+      }
+      table.dataTable.compact tbody td {
+        padding: 0px 4px;
+        line-height: 1.2em;
+      }
+      table {
+        margin-bottom: 20px !important;
+      }
+
+      .map {
+        margin-bottom: 20px;
+      }
+      table.dataTable.no-footer {
+        border-bottom: 1px solid #CCC;
+      }
+    </style>
+
+  </head>
+  <body class="markdown-body">
+    <!--<div id="map"></div>-->
+    <div id="content">
+      <p>CartoDBlocks created by <a id="owner"></a></p>
+    
+    </div>
+
+    <!-- include cartodb.js library -->
+    <script src="http://libs.cartocdn.com/cartodb.js/v3/3.13/cartodb.uncompressed.js"></script>
+    <script src="http://cdn.datatables.net/1.10.6/js/jquery.dataTables.min.js"></script>
+    <script src="markdown.js"></script>
+    <script src="highlight.pack.js"></script>
+    <script src="app.js"></script>
+    <script>
+      app();
+    </script>
+
+  </body>
+</html>
