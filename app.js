@@ -20,7 +20,7 @@ function addTable(el, sql, query) {
       table += "</tbody>";
       table += "</table>";
      var t = $(table)
-     t.insertAfter($(el).parent());
+     t.insertAfter($(el));
      t.DataTable({
        "paging":   false,
        "ordering": true,
@@ -34,7 +34,7 @@ function addExplain(el, sql, query) {
   sql.execute(query).done(function(data) {
      var code = "<pre><code>" + _(data.rows).pluck('QUERY PLAN').join('\n') + "</code></pre>"
      var t = $(code)
-     t.insertAfter($(el).parent());
+     t.insertAfter($(el));
      hljs.highlightBlock(t.find('code')[0]);
   });
 }
@@ -42,16 +42,16 @@ function addExplain(el, sql, query) {
 function addDynamicMap(el, vizjson) {
   var id = "map_" + Date.now()
   el = $(el)
-  var width = $(el.parent().parent()).width();
+  var width = $(el.parent()).width();
   var height = width/1.6;
   var t = $('<div class="map" id="' + id + '" style="height:' + height + 'px;" />');
-  t.insertAfter($(el).parent());
+  t.insertAfter($(el));
   cartodb.createVis(id, vizjson)
 }
 
 function addMap(el, sql, query, user_name) {
   el = $(el)
-  var width = $(el.parent().parent()).width();
+  var width = $(el.parent()).width();
   var height = width/1.6;
   sql.getBounds(query).done(function(bounds) {
     layer_definition = {
@@ -80,7 +80,7 @@ function addMap(el, sql, query, user_name) {
       i.bbox([bounds[1][1], bounds[1][0], bounds[0][1], bounds[0][0]]) 
       .getUrl(function(error, url) {
          var t = $('<img src="' + url + '" />');
-         t.insertAfter($(el).parent());
+         t.insertAfter($(el));
       });
   });
 }
@@ -97,8 +97,8 @@ function app() {
       o.html(gist.owner.login);
 
       $('#content').append(html_content);
-      $('code').each(function(i, el) {
-        var g = el.innerHTML.replace(/\n/g, ' ').match(/([^#%:]*)([#%:])(.*)/)
+      $('pre').each(function(i, el) {
+        var g = el.innerHTML.replace('<code>', ''). replace('</code>', '').replace(/\n/g, ' ').match(/([^#%:]*)([#%:])(.*)/)
         if (g) {
           var query = g[3].trim();
           var user = g[1].trim();
