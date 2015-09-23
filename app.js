@@ -30,6 +30,55 @@ function addTable(el, sql, query) {
   })
 }
 
+function addBarChart(chart,data,arguments){
+
+    chart.setBounds(60, 30, 510, 305);
+    chart.addCategoryAxis("x", arguments[0]);
+    chart.addMeasureAxis("y", arguments[1]);
+
+    chart.addSeries(null, dimple.plot.bar);
+    chart.draw();
+}
+
+function addScatterPlot(chart,data,arguments){
+
+    chart.setBounds(60, 30, 510, 305);
+    chart.addCategoryAxis("x", arguments[0]);
+    chart.addMeasureAxis("y", arguments[1]);
+
+    chart.addSeries("Channel", dimple.plot.bubble);
+    chart.draw();
+}
+
+function addChart(el,sql, query){
+  var match;
+  var type;
+  if(match = query.match(/bar\((.*)\);/)){
+    type  = "bar"
+    query = query.replace(match[0], "")
+  }
+  else if (match = query.match(/scatter\((.*)\);/)){
+    type  = "scatter"
+    query = query.replace(match[0], "")
+
+  }
+  sql.execute(query).done(function(data){
+
+    var chart_id = "chart_"+Math.floor(Math.random()*100000)
+    chart = $("<div id='"+chart_id+"'></div>").insertAfter($(el))
+    var arguments = match[1].split(",")
+    var svg  = dimple.newSvg("#"+chart_id, 590, 400)
+    var myChart = new dimple.chart(svg, data.rows);
+    if(type=='bar'){
+      addBarChart(myChart,data,arguments)
+    }
+    else if(type=='scatter'){
+      addScatterPlot(myChart,data,arguments)
+    }
+
+  })
+}
+
 function addExplain(el, sql, query) {
   sql.execute(query).done(function(data) {
      var code = "<pre><code>" + _(data.rows).pluck('QUERY PLAN').join('\n') + "</code></pre>"
@@ -77,7 +126,7 @@ function addMap(el, sql, query, user_name) {
     var i = cartodb.Image(layer_definition)
       .size(width, height)
       i.userOptions = {}
-      i.bbox([bounds[1][1], bounds[1][0], bounds[0][1], bounds[0][0]]) 
+      i.bbox([bounds[1][1], bounds[1][0], bounds[0][1], bounds[0][0]])
       .getUrl(function(error, url) {
          var t = $('<img src="' + url + '" />');
          t.insertAfter($(el));
@@ -98,7 +147,7 @@ function app() {
 
       $('#content').append(html_content);
       $('pre').each(function(i, el) {
-        var g = el.innerHTML.replace('<code>', ''). replace('</code>', '').replace(/\n/g, ' ').match(/([^#%:]*)([#%:])(.*)/)
+        var g = el.innerHTML.replace('<code>', ''). replace('</code>', '').replace(/\n/g, ' ').match(/([^#%:]*)([#%:!])(.*)/)
         if (g) {
           var query = g[3].trim();
           var user = g[1].trim();
@@ -108,17 +157,20 @@ function app() {
             if (query.trim().indexOf("explain") === 0) {
               addExplain(el, sql, query);
             } else {
-              addTable(el, sql, query); 
+              addTable(el, sql, query);
             }
           } else if (option === '%'){
             var sql = cartodb.SQL({ user: user });
-            addMap(el, sql, query, user) 
+            addMap(el, sql, query, user)
           } else if (option === ':') {
-            addDynamicMap(el, query);
+            addDynamicMap(el,sql, query);
             /*el.parent().remove();
             el.remove();
             el = null;*/
             //https://team.cartodb.com/api/v2/viz/97143e78-2ddb-11e3-8874-3085a9a9563c/viz.json
+          }
+          else if (option ==="!"){
+            addChart(el,sql,query)
           }
         }
         if (el) {
